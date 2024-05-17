@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -26,21 +27,18 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 @Composable
-fun WeatherPage() {
+fun WeatherPage( weatherViewModel: WeatherViewModel) {
     var city by rememberSaveable {
         mutableStateOf("")
     }
 
 
-    val focusRequester = remember { FocusRequester() }
-    val coroutineScope = rememberCoroutineScope()
-
-
     Row(
-       modifier = Modifier.fillMaxSize(),
+       modifier = Modifier.fillMaxSize().padding(20.dp),
        horizontalArrangement = Arrangement.Center
    ) {
        OutlinedTextField(
@@ -56,9 +54,7 @@ fun WeatherPage() {
 
            leadingIcon = {
                IconButton(onClick = {
-                   coroutineScope.launch {
-                       focusRequester.requestFocus()
-                   }
+
                }) {
                    Icon(imageVector = Icons.Filled.LocationOn,
                        contentDescription = "Location Icon")
@@ -66,7 +62,9 @@ fun WeatherPage() {
            },
 
            trailingIcon = {
-               IconButton(onClick = { /*TODO*/ }) {
+               IconButton(onClick = {
+                   weatherViewModel.getData(city)
+               }) {
                    Icon(imageVector = Icons.Default.Search,
                        contentDescription = "Searched" )
                }
@@ -81,8 +79,7 @@ fun WeatherPage() {
                onSearch = {
                    Log.i("ImeAction", "clicked")
                }
-           ),
-           modifier = Modifier.focusRequester(focusRequester)
+           )
 
        )
    }
@@ -92,5 +89,5 @@ fun WeatherPage() {
 @Composable
 @Preview
 fun showWeatherPage() {
-    WeatherPage()
+    WeatherPage(weatherViewModel = WeatherViewModel())
 }
